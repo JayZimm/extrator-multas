@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "@json2csv/plainjs": "^7.0.6",
+    "@react-google-maps/api": "^2.20.6",
+    "react-router-dom": "^7.6.0"
+  }
+}

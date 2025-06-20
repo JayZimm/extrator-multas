@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  multas-web:
+    image: ${REGISTRY:-localhost}/multas-web:${TAG:-latest}
+    deploy:
+      replicas: 2
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+    environment:
+      - NODE_ENV=production
+      - MONGODB_URI=secret://mongodb_uri
+    ports:
+      - "80:3000"
+    networks:
+      - ant-net
+    secrets:
+      - mongodb_uri
+
+networks:
+  ant-net:
+    driver: overlay
+
+secrets:
+  mongodb_uri:
+    external: true 

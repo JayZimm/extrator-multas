@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  antt-frontend:
+    #image: jefzimmer/antt-multas-frontend:v.0.0.9
+    image: us-west1-docker.pkg.dev/rodoxisto-415812/rdx-docker-services/antt-multas-frontend:v-0.0.2
+    container_name: antt-multas-frontend
+    hostname: "{{.Service.Name}}.{{.Task.Slot}}"
+    environment:
+      - VITE_GOOGLE_MAPS_API_KEY_FILE=/run/secrets/google_maps_api_key
+    secrets:
+      - source: google_maps_api_key
+        target: google_maps_api_key
+    networks:
+      - network_swarm_public
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      labels:
+        - traefik.enable=true
+        - traefik.http.routers.ant-multas-frontend.rule=Host(`extratormultas.rodoxisto.com.br`)
+        - traefik.http.routers.ant-multas-frontend.entrypoints=websecure
+        - traefik.http.routers.ant-multas-frontend.tls.certresolver=letsencryptresolver
+        - traefik.http.services.ant-multas-frontend.loadbalancer.server.port=80
+      resources:
+        limits:
+          cpus: "1"
+          memory: 512M
+      placement:
+        constraints:
+          - node.role == manager
+
+networks:
+  network_swarm_public:
+    external: true
+
+secrets:
+  google_maps_api_key:
+    external: true 

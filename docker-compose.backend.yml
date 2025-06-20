@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  antt-backend:
+    #image: jefzimmer/antt-multas-backend:v.0.0.1
+    image: us-west1-docker.pkg.dev/rodoxisto-415812/rdx-docker-services/antt-multas-backend:v-0.0.2
+    container_name: antt-multas-backend
+    hostname: "{{.Service.Name}}.{{.Task.Slot}}"
+    environment:
+      NODE_ENV: production
+    networks:
+      - network_swarm_public
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      labels:
+        - traefik.enable=true
+        - traefik.http.routers.ant-multas-backend.rule=Host(`extratormultas.rodoxisto.com.br`) && PathPrefix(`/api`)
+        - traefik.http.routers.ant-multas-backend.entrypoints=websecure
+        - traefik.http.routers.ant-multas-backend.tls.certresolver=letsencryptresolver
+        - traefik.http.services.ant-multas-backend.loadbalancer.server.port=3000
+      resources:
+        limits:
+          cpus: "1"
+          memory: 512M
+      placement:
+        constraints:
+          - node.role == manager
+
+networks:
+  network_swarm_public:
+    external: true 
