@@ -1,13 +1,21 @@
 # Build stage
 FROM node:18-alpine AS build
 
-# Declare build argument
+# Declare build arguments
 ARG VITE_GOOGLE_MAPS_API_KEY
+ARG VITE_AUTH_API_URL
+ARG VITE_AUTH_TOKEN
+ARG VITE_AUTH_DATASET
+ARG VITE_API_URL
 
 WORKDIR /app
 
-# Create .env.production file with the API key
-RUN echo "VITE_GOOGLE_MAPS_API_KEY=${VITE_GOOGLE_MAPS_API_KEY}" > .env.production
+# Create .env.production file with all environment variables
+RUN echo "VITE_GOOGLE_MAPS_API_KEY=${VITE_GOOGLE_MAPS_API_KEY}" > .env.production && \
+    echo "VITE_AUTH_API_URL=${VITE_AUTH_API_URL}" >> .env.production && \
+    echo "VITE_AUTH_TOKEN=${VITE_AUTH_TOKEN}" >> .env.production && \
+    echo "VITE_AUTH_DATASET=${VITE_AUTH_DATASET}" >> .env.production && \
+    echo "VITE_API_URL=${VITE_API_URL}" >> .env.production
 
 COPY package*.json ./
 RUN npm install

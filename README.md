@@ -133,16 +133,32 @@ docker login
 
 2. **Build e Push do Frontend**
 ```bash
-# Build e push do frontend com a chave do Google Maps
+# Build e push do frontend com TODAS as variáveis necessárias
 docker buildx build --platform linux/amd64 \
-  -t jefzimmer/antt-multas-frontend:v.0.0.2 \
-  --build-arg VITE_GOOGLE_MAPS_API_KEY="sua-chave-aqui" \
+  -t jefzimmer/antt-multas-frontend:v.1.0.1 \
+  --build-arg VITE_GOOGLE_MAPS_API_KEY="sua-chave-google-maps" \
+  --build-arg VITE_AUTH_API_URL="https://osdev.rodoxisto.com.br/Rec_4_APIs/rest/Gateway/Rec4" \
+  --build-arg VITE_AUTH_TOKEN="rdx2022@TCjj" \
+  --build-arg VITE_AUTH_DATASET="37" \
+  --build-arg VITE_API_URL="/api" \
   ./frontend \
   --push
 ```
-**Build no Artifact Registre (Provedor de registro do GCP)
 
-docker buildx build --platform linux/amd64 -t us-west1-docker.pkg.dev/rodoxisto-415812/rdx-docker-services/antt-multas-frontend:v-0.0.2 --build-arg VITE_GOOGLE_MAPS_API_KEY="AIzaSyB-yNuB_K8-lj8ymxpPLjjRwbMZ9guUpnA" --push .
+**Build no Artifact Registry (Provedor de registro do GCP):**
+```bash
+docker buildx build --platform linux/amd64 \
+  -t us-west1-docker.pkg.dev/rodoxisto-415812/rdx-docker-services/antt-multas-frontend:v-1.0.2 \
+  --build-arg VITE_GOOGLE_MAPS_API_KEY="AIzaSyB-yNuB_K8-lj8ymxpPLjjRwbMZ9guUpnA" \
+  --build-arg VITE_AUTH_API_URL="https://osdev.rodoxisto.com.br/Rec_4_APIs/rest/Gateway/Rec4" \
+  --build-arg VITE_AUTH_TOKEN="rdx2022@TCjj" \
+  --build-arg VITE_AUTH_DATASET="37" \
+  --build-arg VITE_API_URL="/api" \
+  --push \
+  ./frontend
+```
+
+**⚠️ IMPORTANTE:** Todas as variáveis `VITE_*` devem ser passadas como `--build-arg` porque o Vite injeta essas variáveis em **build time**, não em runtime!
 
 3. **Build e Push do Backend**
 ```bash
@@ -152,14 +168,16 @@ docker buildx build --platform linux/amd64 \
   ./backend \
   --push
 ```
-docker buildx build --platform linux/amd64 -t us-west1-docker.pkg.dev/rodoxisto-415812/rdx-docker-services/antt-multas-backend:v-0.0.2 --push .
+docker buildx build --platform linux/amd64 -t us-west1-docker.pkg.dev/rodoxisto-415812/rdx-docker-services/antt-multas-backend:v-1.0.2 --push .
 
 ### Observações Importantes
 
 - Use `buildx` para garantir compatibilidade com diferentes plataformas
 - A flag `--platform linux/amd64` garante compatibilidade com a maioria dos servidores
 - A flag `--push` faz o upload da imagem diretamente para o Docker Hub
-- Para o frontend, é necessário passar a chave do Google Maps como build arg
+- **CRÍTICO:** Todas as variáveis `VITE_*` devem ser passadas como `--build-arg` no build
+- O Vite injeta variáveis em **build time**, não em runtime
+- Variáveis definidas em `environment` no docker-compose **não funcionam** para o Vite
 - As versões das imagens devem ser incrementadas conforme novas features são adicionadas
 
 ## 📝 Pending Questions
