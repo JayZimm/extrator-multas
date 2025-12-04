@@ -52,6 +52,20 @@ const autoInfracaoSchema = new mongoose.Schema({
     enum: ['Pendente', 'Pago', 'Cancelado'],
     default: 'Pendente'
   },
+  // Campos de distância
+  distancia_origem: String,
+  distancia_destino: String,
+  distancia_origem_destino_km: Number,
+  // Campos de piso mínimo
+  piso_minimo_tipo_carga: String,
+  piso_minimo_tipo_contratacao: String,
+  piso_minimo_ccd: Number,
+  piso_minimo_cc: Number,
+  piso_minimo_distancia_ida_km: Number,
+  piso_minimo_distancia_retorno_km: Number,
+  piso_minimo_quantidade_total_eixos: Number,
+  piso_minimo_frete_reais: Number,
+  piso_minimo_frete_pago_reais: Number,
   meta: {
     data_emissao_documento: Date,
     data_expedicao_documento: Date,

@@ -254,6 +254,12 @@ router.get('/export', async (req, res) => {
 // Obter detalhes de um auto específico
 router.get('/:id', async (req, res) => {
   try {
+    // Desabilitar cache
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+    res.setHeader('Surrogate-Control', 'no-store');
+    
     const auto = await AutoInfracao.findById(req.params.id);
     
     if (!auto) {
@@ -262,6 +268,12 @@ router.get('/:id', async (req, res) => {
         error: 'NOT_FOUND'
       });
     }
+    
+    console.log('Auto encontrado, campos de piso mínimo:', {
+      tem_distancia_origem: !!auto.distancia_origem,
+      tem_piso_minimo_tipo_carga: !!auto.piso_minimo_tipo_carga,
+      tem_piso_minimo_frete_reais: !!auto.piso_minimo_frete_reais,
+    });
     
     res.json(auto);
   } catch (error) {

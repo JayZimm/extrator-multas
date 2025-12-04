@@ -6,8 +6,29 @@ const router = express.Router();
 // GET /api/infratores
 router.get('/', async (req, res) => {
   try {
-    const infratores = await AutoInfracao.distinct('infrator_nome');
-    res.json(infratores.sort());
+    // Buscar infratores distintos por nome e CNPJ
+    const infratores = await AutoInfracao.aggregate([
+      {
+        $group: {
+          _id: {
+            nome: '$infrator_nome',
+            cnpj: '$infrator_cpf_cnpj'
+          }
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          nome: '$_id.nome',
+          cnpj: '$_id.cnpj'
+        }
+      },
+      {
+        $sort: { nome: 1, cnpj: 1 }
+      }
+    ]);
+    
+    res.json(infratores);
   } catch (error) {
     console.error('Erro ao buscar infratores:', error);
     res.status(500).json({

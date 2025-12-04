@@ -18,10 +18,10 @@ const AutoInfracao = () => {
 
       {/* Filtros */}
       <div className="flex flex-col sm:flex-row gap-4">
-        <div className="flex-1">
+        <div className="flex-1 sm:max-w-md">
           <SearchBar />
         </div>
-        <div className="sm:w-64">
+        <div className="flex-1 sm:max-w-md">
           <InfratorFilter />
         </div>
       </div>

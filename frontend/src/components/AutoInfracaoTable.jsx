@@ -10,6 +10,8 @@ function AutoInfracaoTable() {
   const queryClient = useQueryClient();
   // Estado para controlar o loading manualmente
   const [isManualLoading, setIsManualLoading] = useState(false);
+  // Constante para o limite de registros por página
+  const ITEMS_PER_PAGE = 10;
 
   // Observa o infrator selecionado
   const { data: infratorFiltro = '' } = useQuery({
@@ -66,7 +68,7 @@ function AutoInfracaoTable() {
         const { data } = await axios.get('/api/autos', {
           params: {
             page,
-            limit: 10,
+            limit: ITEMS_PER_PAGE,
             infrator: infratorFiltro,
             search: termoBusca,
             _t: new Date().getTime() // Adiciona timestamp para evitar cache
@@ -196,6 +198,48 @@ function AutoInfracaoTable() {
       console.error('Erro ao exportar autos:', error);
       alert('Erro ao exportar os dados. Por favor, tente novamente.');
     }
+  };
+
+  // Função para gerar array de páginas a exibir com reticências
+  const getPageNumbers = () => {
+    const totalPages = Math.ceil(data?.total / ITEMS_PER_PAGE) || 0;
+    const current = page;
+    const delta = 2; // Número de páginas para mostrar antes e depois da atual
+    const pages = [];
+    
+    if (totalPages <= 7) {
+      // Se tem 7 ou menos páginas, mostra todas
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      // Sempre mostra primeira página
+      pages.push(1);
+      
+      // Calcula o range de páginas ao redor da atual
+      const rangeStart = Math.max(2, current - delta);
+      const rangeEnd = Math.min(totalPages - 1, current + delta);
+      
+      // Adiciona reticências se necessário (início)
+      if (rangeStart > 2) {
+        pages.push('...');
+      }
+      
+      // Adiciona páginas do range
+      for (let i = rangeStart; i <= rangeEnd; i++) {
+        pages.push(i);
+      }
+      
+      // Adiciona reticências se necessário (fim)
+      if (rangeEnd < totalPages - 1) {
+        pages.push('...');
+      }
+      
+      // Sempre mostra última página
+      pages.push(totalPages);
+    }
+    
+    return pages;
   };
 
   // Verificar qualquer estado de loading (isLoading, localLoading, ou isManualLoading)
@@ -383,7 +427,7 @@ function AutoInfracaoTable() {
             </button>
             <button
               onClick={() => setPage((p) => p + 1)}
-              disabled={data.autos.length < 10}
+              disabled={page * ITEMS_PER_PAGE >= data.total}
               className="relative ml-3 inline-flex items-center rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark-card px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Próxima
@@ -392,8 +436,8 @@ function AutoInfracaoTable() {
           <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
             <div>
               <p className="text-sm text-gray-700 dark:text-gray-300">
-                Mostrando <span className="font-medium">{((page - 1) * 10) + 1}</span> até{' '}
-                <span className="font-medium">{Math.min(page * 10, data.total)}</span> de{' '}
+                Mostrando <span className="font-medium">{((page - 1) * ITEMS_PER_PAGE) + 1}</span> até{' '}
+                <span className="font-medium">{Math.min(page * ITEMS_PER_PAGE, data.total)}</span> de{' '}
                 <span className="font-medium">{data.total}</span> resultados
                 {filtroAtivo && " (filtrados)"}
               </p>
@@ -410,22 +454,35 @@ function AutoInfracaoTable() {
                     <path fillRule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clipRule="evenodd" />
                   </svg>
                 </button>
-                {Array.from({ length: Math.ceil(data.total / 10) }, (_, i) => i + 1).map((pageNumber) => (
-                  <button
-                    key={pageNumber}
-                    onClick={() => setPage(pageNumber)}
-                    className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold ${
-                      pageNumber === page
-                        ? 'z-10 bg-primary text-white focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary'
-                        : 'text-gray-900 dark:text-gray-100 ring-1 ring-inset ring-gray-300 dark:ring-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 focus:z-20 focus:outline-offset-0'
-                    }`}
-                  >
-                    {pageNumber}
-                  </button>
-                ))}
+                {getPageNumbers().map((pageNumber, index) => {
+                  if (pageNumber === '...') {
+                    return (
+                      <span
+                        key={`ellipsis-${index}`}
+                        className="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 ring-1 ring-inset ring-gray-300 dark:ring-gray-600"
+                      >
+                        ...
+                      </span>
+                    );
+                  }
+                  
+                  return (
+                    <button
+                      key={pageNumber}
+                      onClick={() => setPage(pageNumber)}
+                      className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold ${
+                        pageNumber === page
+                          ? 'z-10 bg-primary text-white focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary'
+                          : 'text-gray-900 dark:text-gray-100 ring-1 ring-inset ring-gray-300 dark:ring-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 focus:z-20 focus:outline-offset-0'
+                      }`}
+                    >
+                      {pageNumber}
+                    </button>
+                  );
+                })}
                 <button
                   onClick={() => setPage((p) => p + 1)}
-                  disabled={data.autos.length < 10}
+                  disabled={page * ITEMS_PER_PAGE >= data.total}
                   className="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 dark:text-gray-500 ring-1 ring-inset ring-gray-300 dark:ring-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 focus:z-20 focus:outline-offset-0 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <span className="sr-only">Próxima</span>

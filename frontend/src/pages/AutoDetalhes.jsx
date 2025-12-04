@@ -532,6 +532,73 @@ function AutoDetalhes() {
                     <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Ordem de Cessação da Prática</h3>
                     <p className="mt-1 text-gray-900 dark:text-white whitespace-pre-line">{auto?.ordem_cessacao_pratica}</p>
                   </div>
+
+                  {/* Separador */}
+                  {(auto?.distancia_origem || auto?.piso_minimo_tipo_carga) && (
+                    <div className="pt-4 mt-4 border-t border-gray-200 dark:border-gray-700">
+                      <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-4">
+                        Informações de Distância e Piso Mínimo
+                      </h3>
+                    </div>
+                  )}
+
+                  {/* Distância */}
+                  <InfoItem label="Origem" value={auto?.distancia_origem} />
+                  <InfoItem label="Destino" value={auto?.distancia_destino} />
+                  <InfoItem 
+                    label="Distância Total (km)" 
+                    value={auto?.distancia_origem_destino_km ? `${auto.distancia_origem_destino_km.toLocaleString('pt-BR')} km` : null} 
+                  />
+
+                  {/* Piso Mínimo - Tipo */}
+                  <InfoItem label="Tipo de Carga" value={auto?.piso_minimo_tipo_carga} />
+                  <InfoItem label="Tipo de Contratação" value={auto?.piso_minimo_tipo_contratacao} />
+                  
+                  {/* Piso Mínimo - Valores */}
+                  <InfoItem 
+                    label="Piso Mínimo CCD (R$/km)" 
+                    value={auto?.piso_minimo_ccd ? `R$ ${auto.piso_minimo_ccd.toLocaleString('pt-BR', { minimumFractionDigits: 4, maximumFractionDigits: 4 })}` : null} 
+                  />
+                  <InfoItem 
+                    label="Piso Mínimo CC (R$)" 
+                    value={auto?.piso_minimo_cc ? `R$ ${auto.piso_minimo_cc.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : null} 
+                  />
+                  <InfoItem label="Quantidade Total de Eixos" value={auto?.piso_minimo_quantidade_total_eixos} />
+                  
+                  {/* Piso Mínimo - Distância */}
+                  <InfoItem 
+                    label="Distância Ida (km)" 
+                    value={auto?.piso_minimo_distancia_ida_km ? `${auto.piso_minimo_distancia_ida_km.toLocaleString('pt-BR')} km` : null} 
+                  />
+                  <InfoItem 
+                    label="Distância Retorno (km)" 
+                    value={auto?.piso_minimo_distancia_retorno_km !== undefined ? `${auto.piso_minimo_distancia_retorno_km.toLocaleString('pt-BR')} km` : null} 
+                  />
+                  
+                  {/* Piso Mínimo - Frete */}
+                  <InfoItem 
+                    label="Frete Mínimo Devido (R$)" 
+                    value={auto?.piso_minimo_frete_reais ? `R$ ${auto.piso_minimo_frete_reais.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : null} 
+                    className="font-semibold"
+                  />
+                  <InfoItem 
+                    label="Frete Pago (R$)" 
+                    value={auto?.piso_minimo_frete_pago_reais ? `R$ ${auto.piso_minimo_frete_pago_reais.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : null} 
+                    className="font-semibold"
+                  />
+                  
+                  {/* Diferença do Frete */}
+                  {auto?.piso_minimo_frete_reais && auto?.piso_minimo_frete_pago_reais && (
+                    <div className="p-3 bg-red-50 dark:bg-red-900/20 rounded-md border border-red-200 dark:border-red-800">
+                      <h3 className="text-sm font-medium text-red-800 dark:text-red-300">Diferença</h3>
+                      <p className="mt-1 text-lg font-bold text-red-900 dark:text-red-200">
+                        R$ {(auto.piso_minimo_frete_reais - auto.piso_minimo_frete_pago_reais).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      </p>
+                      <p className="mt-1 text-xs text-red-700 dark:text-red-400">
+                        Frete pago abaixo do piso mínimo
+                      </p>
+                    </div>
+                  )}
                 </div>
               )}
 

@@ -3,7 +3,7 @@ version: '3.8'
 services:
   antt-frontend:
     #image: jefzimmer/antt-multas-frontend:v.0.0.9
-    image: us-west1-docker.pkg.dev/rodoxisto-415812/rdx-docker-services/antt-multas-frontend:v-0.0.2
+    image: us-west1-docker.pkg.dev/rodoxisto-415812/rdx-docker-services/antt-multas-frontend:v-1.0.0
     container_name: antt-multas-frontend
     hostname: "{{.Service.Name}}.{{.Task.Slot}}"
     environment:
