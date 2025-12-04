@@ -1,15 +1,20 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
   HomeIcon, 
   CogIcon, 
   ChartBarIcon,
   XMarkIcon,
-  FolderIcon
+  FolderIcon,
+  ArrowRightOnRectangleIcon,
+  UserCircleIcon
 } from '@heroicons/react/24/outline';
+import { useAuth } from '../contexts/AuthContext';
 
 const Sidebar = ({ isOpen, onClose, isMobile }) => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
 
   const menuItems = [
     {
@@ -48,6 +53,14 @@ const Sidebar = ({ isOpen, onClose, isMobile }) => {
     }
   };
 
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+    if (isMobile) {
+      onClose();
+    }
+  };
+
   return (
     <>
       {/* Overlay para mobile */}
@@ -68,27 +81,27 @@ const Sidebar = ({ isOpen, onClose, isMobile }) => {
         `}
       >
         {/* Header do Sidebar */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
-          <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">ANTT</span>
-            </div>
-            <div>
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-                Analista Multas
-              </h2>
-            </div>
-          </div>
-          
-          {/* Botão de fechar (mobile) */}
+        <div className="relative p-4 border-b border-gray-200 dark:border-gray-700">
+          {/* Botão de fechar (mobile) - Posicionado no canto superior direito */}
           {isMobile && (
             <button
               onClick={onClose}
-              className="p-1 rounded-md text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+              className="absolute top-4 right-4 p-1 rounded-md text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 z-10"
             >
               <XMarkIcon className="h-6 w-6" />
             </button>
           )}
+          
+          <div className="flex flex-col items-center space-y-2">
+            <img 
+              src="https://rec4.rodoxisto.com.br/Rec/img/RxTech_UI_Assets.REC_logo.svg?NV3rjQTPr6g1qL8zqGIMfg"
+              alt="Logo REC+"
+              className="w-[90px] h-auto object-contain"
+            />
+            <h2 className="text-sm font-semibold text-gray-900 dark:text-white text-center">
+              Módulo Multas
+            </h2>
+          </div>
         </div>
 
         {/* Menu de Navegação */}
@@ -132,6 +145,30 @@ const Sidebar = ({ isOpen, onClose, isMobile }) => {
             })}
           </ul>
         </nav>
+
+        {/* Informações do Usuário e Logout */}
+        <div className="absolute bottom-16 left-0 right-0 px-2">
+          <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-3 mb-2">
+            <div className="flex items-center mb-3">
+              <UserCircleIcon className="h-8 w-8 text-gray-400 dark:text-gray-500 mr-2" />
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-medium text-gray-900 dark:text-white truncate">
+                  {user?.login}
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  Conectado
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={handleLogout}
+              className="w-full flex items-center justify-center px-3 py-2 text-sm font-medium text-red-600 dark:text-red-400 bg-white dark:bg-gray-700 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-colors border border-red-200 dark:border-red-800"
+            >
+              <ArrowRightOnRectangleIcon className="h-4 w-4 mr-2" />
+              Sair
+            </button>
+          </div>
+        </div>
 
         {/* Footer do Sidebar */}
         <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 dark:border-gray-700">

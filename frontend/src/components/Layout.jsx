@@ -60,7 +60,7 @@ const Layout = () => {
                 {/* Título da Página */}
                 <div className="hidden sm:block">
                   <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
-                    Sistema ANTT - Análise de Multas
+                    Módulo de multas ANTT
                   </h1>
                 </div>
               </div>

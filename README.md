@@ -65,13 +65,60 @@ npm install
 
 3. Configure as variáveis de ambiente
 ```bash
+# IMPORTANTE: O arquivo .env deve ficar na RAIZ do projeto, não dentro de frontend/
 cp .env.example .env
 ```
+
+Edite o arquivo `.env` na **raiz do projeto** e configure as variáveis de autenticação:
+```env
+# API Backend
+VITE_API_URL=http://localhost:3000
+
+# API de Autenticação
+VITE_AUTH_API_URL=https://osdev.rodoxisto.com.br/Rec_4_APIs/rest/Gateway/Rec4
+VITE_AUTH_TOKEN=rdx2022@TCjj
+VITE_AUTH_DATASET=37
+```
+
+**Nota:** O Vite está configurado (`envDir: '..'` no `vite.config.js`) para ler variáveis de ambiente da raiz do projeto.
 
 4. Inicie o ambiente de desenvolvimento
 ```bash
 docker compose up
 ```
+
+## 🔐 Autenticação
+
+O sistema utiliza um sistema de autenticação via API externa. Todas as rotas do frontend são protegidas e requerem login.
+
+### Funcionalidades de Autenticação
+
+- **Login**: Tela de login com validação de credenciais via API externa
+- **Proteção de Rotas**: Todas as páginas são protegidas e redirecionam para login se não autenticado
+- **Logout**: Botão de logout disponível na sidebar
+- **Campo Senha**: Possui ícone de "olho" para visualizar/ocultar a senha digitada
+- **Persistência**: Sessão mantida no localStorage do navegador
+
+### Credenciais de Teste
+
+Para testar o sistema, utilize as credenciais fornecidas pelo administrador do sistema.
+
+### Fluxo de Autenticação
+
+1. Usuário acessa qualquer rota do sistema
+2. Se não autenticado, é redirecionado para `/login`
+3. Após login bem-sucedido, é redirecionado para a página original solicitada
+4. A sessão é mantida até que o usuário faça logout ou limpe o cache do navegador
+
+### API de Autenticação
+
+O sistema se integra com a API de autenticação através do endpoint:
+- **URL**: Configurada via `VITE_AUTH_API_URL`
+- **Método**: POST
+- **Response Success**: `StatusCode: 200`
+- **Response Error**: `StatusCode: 404`
+
+**Nota**: Não há funcionalidade de recuperação de senha implementada.
 
 ## 🚀 Deploy em Produção
 
@@ -128,11 +175,14 @@ docker buildx build --platform linux/amd64 -t us-west1-docker.pkg.dev/rodoxisto-
 - UI responsiva ≥ 768px
 - Réplicas saudáveis no Docker Swarm
 
-## 🔐 Segurança
+## 🔒 Segurança
 
-- Conexão MongoDB via variável de ambiente
-- Secrets gerenciados via Docker Swarm
-- CORS configurado adequadamente
+- **Autenticação**: Sistema de login integrado com API externa
+- **Proteção de Rotas**: Todas as páginas requerem autenticação
+- **Conexão MongoDB**: Credenciais via variável de ambiente
+- **Secrets**: Gerenciados via Docker Swarm
+- **CORS**: Configurado adequadamente
+- **Token de API**: Armazenado em variáveis de ambiente
 
 ## 📄 Licença
 
