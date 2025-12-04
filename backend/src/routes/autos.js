@@ -269,12 +269,6 @@ router.get('/:id', async (req, res) => {
       });
     }
     
-    console.log('Auto encontrado, campos de piso mínimo:', {
-      tem_distancia_origem: !!auto.distancia_origem,
-      tem_piso_minimo_tipo_carga: !!auto.piso_minimo_tipo_carga,
-      tem_piso_minimo_frete_reais: !!auto.piso_minimo_frete_reais,
-    });
-    
     res.json(auto);
   } catch (error) {
     console.error('Erro ao buscar detalhes do auto:', error);
