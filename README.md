@@ -146,9 +146,14 @@ docker buildx build --platform linux/amd64 \
 ```
 
 **Build no Artifact Registry (Provedor de registro do GCP):**
+
+Login no Google:
+
+gcloud auth login
+
 ```bash
 docker buildx build --platform linux/amd64 \
-  -t us-west1-docker.pkg.dev/rodoxisto-415812/rdx-docker-services/antt-multas-frontend:v-1.0.2 \
+  -t us-west1-docker.pkg.dev/rodoxisto-415812/rdx-docker-services/antt-multas-frontend:v-1.0.3 \
   --build-arg VITE_GOOGLE_MAPS_API_KEY="AIzaSyB-yNuB_K8-lj8ymxpPLjjRwbMZ9guUpnA" \
   --build-arg VITE_AUTH_API_URL="https://osdev.rodoxisto.com.br/Rec_4_APIs/rest/Gateway/Rec4" \
   --build-arg VITE_AUTH_TOKEN="rdx2022@TCjj" \
@@ -157,6 +162,10 @@ docker buildx build --platform linux/amd64 \
   --push \
   ./frontend
 ```
+
+**Build usando script que já lança todas as variaveis Vite. Substituir a versão antes de rodar**
+cd /Users/Jeferson/ProjetosDesenolvimento/rodoxisto/ANALISTA_MULTAS_ANTT
+./build-frontend-production.sh v-1.0.3
 
 **⚠️ IMPORTANTE:** Todas as variáveis `VITE_*` devem ser passadas como `--build-arg` porque o Vite injeta essas variáveis em **build time**, não em runtime!
 

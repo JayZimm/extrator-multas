@@ -1,13 +1,14 @@
 import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { 
-  HomeIcon, 
-  CogIcon, 
+import {
+  HomeIcon,
+  CogIcon,
   ChartBarIcon,
   XMarkIcon,
   FolderIcon,
   ArrowRightOnRectangleIcon,
-  UserCircleIcon
+  UserCircleIcon,
+  DocumentCheckIcon
 } from '@heroicons/react/24/outline';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -40,6 +41,12 @@ const Sidebar = ({ isOpen, onClose, isMobile }) => {
       name: 'Gerenciador de Arquivos',
       icon: FolderIcon,
       description: 'Gerenciar documentos e arquivos'
+    },
+    {
+      path: '/processed-files',
+      name: 'Arquivos Processados',
+      icon: DocumentCheckIcon,
+      description: 'Excluir arquivos processados'
     }
   ];
 
@@ -65,12 +72,12 @@ const Sidebar = ({ isOpen, onClose, isMobile }) => {
     <>
       {/* Overlay para mobile */}
       {isMobile && isOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
           onClick={onClose}
         />
       )}
-      
+
       {/* Sidebar */}
       <div
         className={`
@@ -91,9 +98,9 @@ const Sidebar = ({ isOpen, onClose, isMobile }) => {
               <XMarkIcon className="h-6 w-6" />
             </button>
           )}
-          
+
           <div className="flex flex-col items-center space-y-2">
-            <img 
+            <img
               src="https://rec4.rodoxisto.com.br/Rec/img/RxTech_UI_Assets.REC_logo.svg?NV3rjQTPr6g1qL8zqGIMfg"
               alt="Logo REC+"
               className="w-[90px] h-auto object-contain"
@@ -110,7 +117,7 @@ const Sidebar = ({ isOpen, onClose, isMobile }) => {
             {menuItems.map((item) => {
               const Icon = item.icon;
               const active = isActive(item.path);
-              
+
               return (
                 <li key={item.path}>
                   <Link
@@ -118,17 +125,17 @@ const Sidebar = ({ isOpen, onClose, isMobile }) => {
                     onClick={handleItemClick}
                     className={`
                       group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-colors duration-200
-                      ${active 
-                        ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-200' 
+                      ${active
+                        ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-200'
                         : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700'
                       }
                     `}
                   >
-                    <Icon 
+                    <Icon
                       className={`
                         mr-3 h-5 w-5 flex-shrink-0
-                        ${active 
-                          ? 'text-blue-700 dark:text-blue-200' 
+                        ${active
+                          ? 'text-blue-700 dark:text-blue-200'
                           : 'text-gray-400 group-hover:text-gray-600 dark:text-gray-400 dark:group-hover:text-gray-300'
                         }
                       `}

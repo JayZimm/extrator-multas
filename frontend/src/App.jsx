@@ -8,6 +8,7 @@ import ProcessControl from './pages/ProcessControl';
 import ProcessHistory from './pages/ProcessHistory';
 import AutoDetalhes from './pages/AutoDetalhes';
 import StorageManager from './pages/StorageManager';
+import ProcessedFiles from './pages/ProcessedFiles';
 import { useAuth } from './contexts/AuthContext';
 
 function App() {
@@ -16,16 +17,16 @@ function App() {
   return (
     <Routes>
       {/* Rota de Login */}
-      <Route 
-        path="/login" 
+      <Route
+        path="/login"
         element={
           isAuthenticated ? <Navigate to="/" replace /> : <Login />
-        } 
+        }
       />
 
       {/* Rotas Protegidas */}
-      <Route 
-        path="/" 
+      <Route
+        path="/"
         element={
           <ProtectedRoute>
             <Layout />
@@ -37,6 +38,7 @@ function App() {
         <Route path="process-history" element={<ProcessHistory />} />
         <Route path="auto/:id" element={<AutoDetalhes />} />
         <Route path="storage" element={<StorageManager />} />
+        <Route path="processed-files" element={<ProcessedFiles />} />
       </Route>
 
       {/* Rota 404 - Redireciona para home */}
