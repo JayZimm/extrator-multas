@@ -9,6 +9,7 @@ import { connectDB } from './config/database.js';
 import autosRoutes from './routes/autos.js';
 import infratoresRoutes from './routes/infratores.js';
 import storageRoutes from './routes/storage.js';
+import processedFilesRoutes from './routes/processedFiles.js';
 
 // Configurar path para módulos ES6
 const __filename = fileURLToPath(import.meta.url);
@@ -32,10 +33,10 @@ const corsOptions = {
   origin: '*', // Permite todas as origens
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: [
-    'Content-Type', 
-    'Authorization', 
-    'Cache-Control', 
-    'Pragma', 
+    'Content-Type',
+    'Authorization',
+    'Cache-Control',
+    'Pragma',
     'If-Modified-Since',
     'Accept',
     'Expires'
@@ -65,6 +66,7 @@ app.use((req, res, next) => {
 app.use('/api/autos', autosRoutes);
 app.use('/api/infratores', infratoresRoutes);
 app.use('/api/storage', storageRoutes);
+app.use('/api/processed-files', processedFilesRoutes);
 
 // Rota de diagnóstico para verificar o status do servidor
 app.get('/api/status', (req, res) => {
@@ -91,7 +93,7 @@ app.use((err, req, res, next) => {
   console.error('Erro:', err.message);
   console.error('Stack:', err.stack);
   console.error('========================================');
-  
+
   res.status(500).json({
     message: 'Erro interno do servidor',
     code: 'INTERNAL_ERROR',
@@ -104,7 +106,7 @@ app.listen(PORT, () => {
   const startupTime = new Date().toISOString();
   console.log(`[${startupTime}] Servidor rodando na porta ${PORT}`);
   console.log(`[${startupTime}] Ambiente: ${process.env.NODE_ENV || 'desenvolvimento'}`);
-  
+
   // Tenta conectar ao MongoDB após iniciar o servidor
   connectDB().catch(err => {
     console.error('Erro ao conectar ao MongoDB:', err);

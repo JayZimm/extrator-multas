@@ -69,7 +69,8 @@ const autoInfracaoSchema = new mongoose.Schema({
   meta: {
     data_emissao_documento: Date,
     data_expedicao_documento: Date,
-    fonte: String
+    fonte: String,
+    arquivo_origem: String // Caminho completo do arquivo no GCS que originou este auto
   }
 }, {
   timestamps: true,

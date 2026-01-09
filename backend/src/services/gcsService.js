@@ -135,7 +135,7 @@ class GCSService {
     try {
       // Garantir que o caminho termina com /
       const normalizedPath = folderPath.endsWith('/') ? folderPath : `${folderPath}/`;
-      
+
       // Verificar se já existe
       const [exists] = await this.bucket.file(normalizedPath).exists();
       if (exists) {
@@ -234,7 +234,7 @@ class GCSService {
     try {
       const file = this.bucket.file(objectPath);
       const [exists] = await file.exists();
-      
+
       if (!exists) {
         throw new Error('Arquivo ou pasta não encontrado');
       }
@@ -253,6 +253,34 @@ class GCSService {
   }
 
   /**
+   * Busca um arquivo pelo nome no bucket
+   * @param {string} fileName - Nome do arquivo a ser buscado
+   * @returns {Promise<string|null>} Caminho completo do arquivo ou null
+   */
+  async findFile(fileName) {
+    try {
+      console.log(`Buscando arquivo ${fileName} no bucket...`);
+      // Tenta usar matchGlob para busca eficiente
+      const [files] = await this.bucket.getFiles({
+        matchGlob: `**/${fileName}`,
+        maxResults: 1
+      });
+
+      if (files && files.length > 0) {
+        console.log(`Arquivo encontrado: ${files[0].name}`);
+        return files[0].name;
+      }
+
+      console.log('Arquivo não encontrado via matchGlob');
+      return null;
+    } catch (error) {
+      console.error('Erro ao buscar arquivo no GCS:', error);
+      // Fallback silencioso ou rethrow? Vamos apenas logar e retornar null
+      return null;
+    }
+  }
+
+  /**
    * Gera URL assinada para download de arquivo
    * @param {string} filePath - Caminho do arquivo
    * @param {number} expiresInMinutes - Tempo de expiração em minutos
@@ -262,7 +290,7 @@ class GCSService {
     try {
       const file = this.bucket.file(filePath);
       const [exists] = await file.exists();
-      
+
       if (!exists) {
         throw new Error('Arquivo não encontrado');
       }
